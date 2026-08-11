@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+pymongo
+pandas
+scikit-learn
+joblib
+xgboost

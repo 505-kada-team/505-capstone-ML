@@ -1,0 +1,11 @@
+{
+  "feature_columns": [
+    "plan_duration",
+    "start_month",
+    "is_promo",
+    "menu_selling_price",
+    "ingredient_count"
+  ],
+  "mae": 110.19352460588728,
+  "trained_at": "2026-08-11T17:23:53.148895+00:00"
+}
