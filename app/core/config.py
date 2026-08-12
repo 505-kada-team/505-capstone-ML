@@ -1,7 +1,5 @@
 from pathlib import Path
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
 
 class Settings(BaseSettings):
     app_name: str = "capstone-ml-service"
@@ -17,16 +15,11 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-
 settings = Settings()
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
 
 def resolve_project_path(path: str) -> Path:
     candidate = Path(path)
-
     if candidate.is_absolute():
         return candidate
-
     return PROJECT_ROOT / candidate

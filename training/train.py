@@ -12,10 +12,13 @@ import xgboost as xgb
 from app.core.config import settings
 from app.ml.features import FEATURE_COLUMNS
 
-def load_training_data(db):
+def load_training_data(db, user_id: str = None):
+    query = {"status": "stopped"}
+    if user_id:
+        query["userId"] = ObjectId(user_id) if ObjectId.is_valid(user_id) else user_id
     plans = list(
         db.get_collection("productionplans").find(
-            {"status": "stopped"},
+            query,
             {"duration": 1, "startDate": 1, "tags": 1, "menus": 1, "_id": 0},
         )
     )
@@ -79,7 +82,6 @@ def load_training_data(db):
         raise ValueError("No training rows were generated from ProductionPlan documents. Please ensure there is at least one plan with a 'stopped' status.")
 
     return pd.DataFrame(rows, columns=FEATURE_COLUMNS), pd.Series(targets)
-
 
 def train_model():
     client = MongoClient(settings.mongodb_uri, serverSelectionTimeoutMS=5000)
