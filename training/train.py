@@ -12,12 +12,22 @@ import xgboost as xgb
 from app.core.config import settings
 from app.ml.features import FEATURE_COLUMNS
 
-
 def load_training_data(db):
     plans = list(
         db.get_collection("productionplans").find(
             {"status": "stopped"},
             {"duration": 1, "startDate": 1, "tags": 1, "menus": 1, "_id": 0},
+        )
+    )
+    print("Database:", db.name)
+    print(
+        "Total productionplans:",
+        db.get_collection("productionplans").count_documents({})
+    )
+    print(
+        "Stopped productionplans:",
+        db.get_collection("productionplans").count_documents(
+            {"status": "stopped"}
         )
     )
 
@@ -66,7 +76,7 @@ def load_training_data(db):
             targets.append(float(menu_item.get("soldQuantity", 0) or 0))
 
     if not rows:
-        raise ValueError("No training rows were generated from ProductionPlan documents. Pastikan ada Plan dengan status 'stopped'.")
+        raise ValueError("No training rows were generated from ProductionPlan documents. Please ensure there is at least one plan with a 'stopped' status.")
 
     return pd.DataFrame(rows, columns=FEATURE_COLUMNS), pd.Series(targets)
 
@@ -74,6 +84,7 @@ def load_training_data(db):
 def train_model():
     client = MongoClient(settings.mongodb_uri, serverSelectionTimeoutMS=5000)
     db = client[settings.mongodb_db]
+    print("MongoDB database:", settings.mongodb_db)
     try:
         features, target = load_training_data(db)
     finally:

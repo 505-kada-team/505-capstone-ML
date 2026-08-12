@@ -6,7 +6,6 @@ from app.core.config import settings
 from app.db.mongodb import close_mongo, get_client
 from app.ml.model_loader import get_model
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
