@@ -6,7 +6,6 @@ import joblib
 
 from app.core.config import resolve_project_path, settings
 
-
 class ModelLoader:
     _instance: Optional["ModelLoader"] = None
     _lock = Lock()
@@ -27,9 +26,7 @@ class ModelLoader:
             self._model = joblib.load(model_path)
         return self._model
 
-
 model_loader = ModelLoader()
-
 
 def get_model():
     return model_loader.load()
