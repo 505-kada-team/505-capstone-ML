@@ -1,12 +1,18 @@
-from pathlib import Path
 from threading import Lock
-from typing import Optional
+from typing import Any, Optional
 
 import joblib
 
 from app.core.config import resolve_project_path, settings
 
+
 class ModelLoader:
+    """Singleton loader for a serialized scikit-learn model.
+
+    Loads the model using `joblib.load()` from the path defined in
+    `settings.model_path`.
+    """
+
     _instance: Optional["ModelLoader"] = None
     _lock = Lock()
 
@@ -18,15 +24,17 @@ class ModelLoader:
                     cls._instance._model = None
         return cls._instance
 
-    def load(self):
+    def load(self) -> Any:
         if self._model is None:
             model_path = resolve_project_path(settings.model_path)
             if not model_path.exists():
                 raise FileNotFoundError(f"Model file not found at {model_path}")
-            self._model = joblib.load(model_path)
+            self._model = joblib.load(str(model_path))
         return self._model
+
 
 model_loader = ModelLoader()
 
-def get_model():
+
+def get_model() -> Any:
     return model_loader.load()

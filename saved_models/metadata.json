@@ -1,4 +1,5 @@
 {
+  "model_type": "RandomForestRegressor",
   "feature_columns": [
     "plan_duration",
     "start_month",
@@ -6,6 +7,16 @@
     "menu_selling_price",
     "ingredient_count"
   ],
-  "mae": 83.57248932974679,
-  "trained_at": "2026-08-12T04:57:17.479729+00:00"
+  "model_file": "model.joblib",
+  "load_instructions": "joblib.load('model.joblib') -> model.predict(X)",
+  "requires_at_inference": [
+    "scikit-learn==1.5.2",
+    "joblib==1.4.2"
+  ],
+  "mae": 49.02350432747583,
+  "mape_percent": 30.43101297667562,
+  "n_train_rows": 708,
+  "n_test_rows": 178,
+  "trained_at": "2026-08-13T10:29:32.803784+00:00",
+  "note": "Trained on synthetic dummy dataset (local sandbox), NOT production MongoDB data."
 }

@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 
-from app.ml.features import FEATURE_COLUMNS, build_feature_dataframe
+from app.ml.features import FEATURE_COLUMNS, build_feature_rows
 from app.ml.model_loader import get_model
 
 
@@ -10,16 +10,18 @@ def build_recommendations(plan_request: Any) -> List[Dict[str, Any]]:
     if not menus:
         return []
 
-    feature_frame = build_feature_dataframe(plan_request, menus)
+    feature_rows = build_feature_rows(plan_request, menus)
+
     model = get_model()
-    predictions = model.predict(feature_frame[FEATURE_COLUMNS])
+    # scikit-learn estimators accept array-like inputs (list of lists or DataFrame)
+    predictions = model.predict(feature_rows)
 
     ranked: List[Dict[str, Any]] = []
     for menu, prediction in zip(menus, predictions):
         qty = int(round(float(prediction)))
         if qty <= 0:
             continue
-        
+
         ranked.append(
             {
                 "menuId": str(menu.get("_id", "")),

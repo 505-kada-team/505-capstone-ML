@@ -1,0 +1,19 @@
+# Training-only code & heavy deps - never needed at inference time
+app/ml/train.py
+requirements-train.txt
+
+# Old / stale model artifacts (keep only saved_models/model.joblib + metadata.json)
+# If you prefer to commit the model artifact, keep saved_models/model.joblib.
+# Otherwise the CI/deploy step should populate it.
+saved_models/*.json
+saved_models/*.pkl
+
+# Misc
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+tests/
+*.ipynb
+.git/

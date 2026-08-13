@@ -1,12 +1,16 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
     app_name: str = "capstone-ml-service"
 
     mongodb_uri: str = "mongodb://localhost:27017"
     mongodb_db: str = "kada"
 
+    # Serialized scikit-learn model (joblib/pickle). This service loads the
+    # pickled model at inference time using joblib.load(). Update this when
+    # changing model format or filename.
     model_path: str = "saved_models/model.joblib"
     metadata_path: str = "saved_models/metadata.json"
 
@@ -15,8 +19,10 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
+
 settings = Settings()
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 
 def resolve_project_path(path: str) -> Path:
     candidate = Path(path)

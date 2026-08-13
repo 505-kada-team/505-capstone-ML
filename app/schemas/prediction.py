@@ -1,6 +1,7 @@
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 
+
 class PlanRequest(BaseModel):
     duration: int = Field(..., ge=1, le=60)
     startDate: str
@@ -9,6 +10,7 @@ class PlanRequest(BaseModel):
         ...,
         description="List of active menus from Node.js"
     )
+
 
 class MenuRecommendation(BaseModel):
     menuId: str
