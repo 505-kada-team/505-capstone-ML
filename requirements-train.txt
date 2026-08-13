@@ -1,0 +1,9 @@
+# Only install this locally / in CI to (re)train the model.
+# Do NOT deploy this file to Vercel - it pulls in pandas, scikit-learn,
+# pymongo, and joblib, which are unnecessary and heavy for inference.
+
+-r requirements.txt
+pandas==2.2.3
+scikit-learn==1.5.2
+pymongo==4.9.1
+joblib==1.4.2

@@ -1,4 +1,69 @@
+# Python virtual environments
 .venv/
+venv/
+ENV/
+env/
+.venv-train/
+
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# mypy
+.mypy_cache/
+
+# Pyre type checker
+.pyre/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
 .env
-seed.py
+.env.*
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Cache
+.cache/
+
+# Coverage output
+coverage.xml
+
+# Optional: ignore saved model artifacts (uncomment if you don't want to commit)
+# saved_models/

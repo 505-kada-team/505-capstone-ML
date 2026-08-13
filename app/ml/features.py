@@ -1,7 +1,5 @@
-from datetime import datetime, date
+from datetime import datetime
 from typing import Any, Dict, List
-
-import pandas as pd
 
 FEATURE_COLUMNS = [
     "plan_duration",
@@ -12,6 +10,17 @@ FEATURE_COLUMNS = [
 ]
 
 PROMO_TAGS = {"promo", "promotion", "discount", "special"}
+
+# Common date formats we fall back to when fromisoformat() fails.
+# Replaces the old pandas.to_datetime() fallback so pandas is not
+# required at inference time.
+_DATE_FORMATS = (
+    "%Y-%m-%d",
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%dT%H:%M:%S.%f",
+    "%Y/%m/%d",
+    "%d/%m/%Y",
+)
 
 
 def _coerce_plan_request(plan_request: Any) -> Dict[str, Any]:
@@ -34,24 +43,31 @@ def _coerce_menu_document(menu_document: Any) -> Dict[str, Any]:
     raise TypeError("menu_document must be a dict-like object")
 
 
+def _parse_start_month(start_date_raw: Any) -> int:
+    if isinstance(start_date_raw, datetime):
+        return int(start_date_raw.month)
+    if hasattr(start_date_raw, "month"):  # date object
+        return int(start_date_raw.month)
+    if isinstance(start_date_raw, str):
+        try:
+            return int(datetime.fromisoformat(start_date_raw.replace("Z", "+00:00")).month)
+        except ValueError:
+            pass
+        for fmt in _DATE_FORMATS:
+            try:
+                return int(datetime.strptime(start_date_raw, fmt).month)
+            except ValueError:
+                continue
+    return 1
+
+
 def extract_features(plan_request: Any, menu_document: Any) -> Dict[str, float]:
     plan_data = _coerce_plan_request(plan_request)
     menu_data = _coerce_menu_document(menu_document)
 
     duration = int(plan_data.get("duration", 0) or 0)
     tags = plan_data.get("tags", []) or []
-    start_date_raw = plan_data.get("startDate")
-
-    if isinstance(start_date_raw, str):
-        try:
-            start_date = datetime.fromisoformat(start_date_raw.replace("Z", "+00:00"))
-            start_month = int(start_date.month)
-        except ValueError:
-            start_month = int(pd.to_datetime(start_date_raw).month)
-    elif isinstance(start_date_raw, (datetime, date)):
-        start_month = int(start_date_raw.month)
-    else:
-        start_month = 1
+    start_month = _parse_start_month(plan_data.get("startDate"))
 
     is_promo = 1 if any(str(tag).lower() in PROMO_TAGS for tag in tags) else 0
     selling_price = float(menu_data.get("sellingPrice", 0) or 0)
@@ -66,7 +82,16 @@ def extract_features(plan_request: Any, menu_document: Any) -> Dict[str, float]:
     }
 
 
-def build_feature_dataframe(plan_request: Any, menus: List[Dict[str, Any]]) -> pd.DataFrame:
-    rows = [extract_features(plan_request, menu) for menu in menus]
-    frame = pd.DataFrame(rows, columns=FEATURE_COLUMNS)
-    return frame.fillna(0)
+def build_feature_rows(plan_request: Any, menus: List[Dict[str, Any]]) -> List[List[float]]:
+    """Build feature rows as plain lists, in FEATURE_COLUMNS order.
+
+    This replaces the old pandas-based build_feature_dataframe(). The values
+    and ordering produced are identical; only the container type changed
+    (list of lists instead of a DataFrame), so pandas is no longer a
+    runtime dependency for inference.
+    """
+    rows: List[List[float]] = []
+    for menu in menus:
+        feats = extract_features(plan_request, menu)
+        rows.append([feats[col] for col in FEATURE_COLUMNS])
+    return rows
