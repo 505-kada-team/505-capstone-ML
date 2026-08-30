@@ -90,12 +90,6 @@ Deployment
 - For serverless (Vercel) review `api/index.py` and `vercel.json` for handler rules.
 - For containerized deployments use Uvicorn/Gunicorn and run the `app.main` ASGI app.
 
-Development notes
------------------
-- Keep feature engineering deterministic and covered by unit tests in `ml/features.py`.
-- Add tests for `services/prediction.py` to validate inference behavior.
-- Update `requirements.txt` when adding or upgrading dependencies.
-
 Contributing
 ------------
 1. Open an issue for non-trivial changes or feature requests.
@@ -103,5 +97,5 @@ Contributing
 
 Acknowledgements
 ----------------
-This repository was created for the 505 capstone project (505-capstone-ml). If you want, I can add a small example client script, CI workflow, or a `Makefile` for common tasks.
+This repository was created for the 505 capstone project (505-capstone-ml).
 
